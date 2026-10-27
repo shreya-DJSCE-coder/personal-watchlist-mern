@@ -7,21 +7,29 @@ const movieRoutes = require('./routes/movieRoutes');
 // Load environment variables
 dotenv.config();
 
-// Initialize express app
 const app = express();
-
-// Connect to MongoDB
-connectDB();
 
 // Core Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check / welcome route
-app.get('/', (req, res) => {
+// Ensure Database connection for every request (essential for serverless cold starts)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('Database connection warning in request middleware:', err.message);
+  }
+  next();
+});
+
+// Health check / welcome route (handles both / and /api)
+app.get(['/', '/api'], (req, res) => {
   res.status(200).json({
+    status: 'OK',
     message: '🎬 Personal Movie & Web Series Watchlist API is running!',
+    database: 'MongoDB Atlas Connected',
     endpoints: {
       getAllMovies: 'GET /api/movies',
       addMovie: 'POST /api/movies',
@@ -31,8 +39,9 @@ app.get('/', (req, res) => {
   });
 });
 
-// Mount Routes
+// Mount Routes - both with and without /api prefix for maximum serverless compatibility
 app.use('/api/movies', movieRoutes);
+app.use('/movies', movieRoutes);
 
 // 404 Route Handler
 app.use((req, res) => {
@@ -52,9 +61,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// Only start HTTP listener if executed directly (e.g. node server.js), not when imported as serverless function
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Watchlist Server running on http://localhost:${PORT}`);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`🚀 Watchlist Server running on http://localhost:${PORT}`);
-});
-
+module.exports = app;

@@ -1,140 +1,94 @@
 # 🍿 BingeWatch - Personal Movie & Web Series Watchlist (MERN Stack)
 
-A full-stack web application built using the **MERN Stack** (MongoDB, Express.js, React, Node.js) to manage and track your personal movies, web series, and anime watchlists with real-time status updates and ratings.
+A production-ready full-stack web application built using the **MERN Stack** (MongoDB Atlas, Express.js, React, Node.js) to manage and track your personal movies, web series, and anime watchlists with real-time status updates and ratings.
 
 ---
 
-## 📁 Project Folder Structure
+## 🚀 Live Vercel Deployment Architecture
+
+This project is configured to run **100% on Vercel** as a unified full-stack application:
+- **Frontend:** React 18 + Vite compiled to static assets served globally via Vercel Edge CDN.
+- **Backend API:** Express serverless function (`/api/index.js`) handling all REST endpoints (`/api/movies`).
+- **Database:** MongoDB Atlas cloud cluster (`cluster0.4mm8slo.mongodb.net`).
+- **Zero CORS / "Failed to fetch" Issues:** Both frontend and backend share the same domain via `vercel.json` URL rewrites, eliminating cross-origin errors and mixed-content issues.
+
+---
+
+## 📁 Project Structure
 
 ```text
 WP/
+├── api/
+│   └── index.js                          # Vercel Serverless Function entry point
 ├── backend/
 │   ├── config/
-│   │   └── db.js                 # MongoDB connection logic via Mongoose
+│   │   └── db.js                         # MongoDB connection with serverless connection caching
 │   ├── controllers/
-│   │   └── movieController.js    # CRUD request handlers for movies
+│   │   └── movieController.js            # CRUD handlers (GET, POST, PUT, DELETE)
 │   ├── models/
-│   │   └── Movie.js              # Mongoose Schema & validation
+│   │   └── Movie.js                      # Mongoose Schema & validation
 │   ├── routes/
-│   │   └── movieRoutes.js        # Express REST API routes
-│   ├── .env                      # Local environment variables
-│   ├── .env.example              # Example environment template
-│   ├── package.json              # Backend dependencies and scripts
-│   ├── seed.js                   # Pre-populated dummy movies seed script
-│   └── server.js                 # Express server entry point
-│
+│   │   └── movieRoutes.js                # Express REST API routes
+│   ├── .env                              # Environment variables (MongoDB Atlas URI)
+│   ├── .env.example                      # Template for environment variables
+│   ├── seed.js                           # Database seeding script for dummy data
+│   └── server.js                         # Express server (local & serverless export)
 ├── frontend/
-│   ├── index.html                # Main HTML template with Google Fonts
-│   ├── package.json              # Frontend dependencies and Vite scripts
-│   ├── vite.config.js            # Vite configuration with /api proxy
+│   ├── index.html                        # HTML template with Google Fonts
+│   ├── vite.config.js                    # Vite configuration with proxy
 │   └── src/
-│       ├── components/
-│       │   ├── MovieCard.jsx     # Card UI: Title, platform badge, stars, status toggle, delete
-│       │   ├── MovieForm.jsx     # Add entry form (title, type, platform, rating, status)
-│       │   ├── Navbar.jsx        # App header & active counters
-│       │   ├── StatsSummary.jsx  # Watchlist statistics summary tiles
-│       │   └── StatusFilter.jsx  # Status filter tabs (All, Plan to Watch, Watching, Completed)
-│       ├── services/
-│       │   └── api.js            # API client service for backend communication
-│       ├── App.css               # Modern dark-theme responsive styling
-│       ├── App.jsx               # Main React application component
-│       ├── index.css             # Global CSS reset & theme variables
-│       └── main.jsx              # React DOM entry point
-│
-├── package.json                  # Root runner scripts
-└── README.md                     # Comprehensive project documentation
+│       ├── components/                   # React components (MovieCard, MovieForm, etc.)
+│       ├── services/api.js               # Clean REST API client
+│       ├── App.css                       # Modern dark-theme responsive UI styles
+│       ├── App.jsx                       # Main application state & logic
+│       ├── index.css                     # Global reset & CSS variables
+│       └── main.jsx                      # React DOM mount point
+├── package.json                          # Root runner & Vercel build script
+├── vercel.json                           # Vercel routing & serverless rewrites
+└── README.md                             # Documentation
 ```
 
 ---
 
-## ⚡ Tech Stack & Technologies
+## 🌐 Deploy to Vercel in 1-Click
 
-- **Frontend:** React 18, Vite, Modern CSS3 (Dark Theme, Flexbox & CSS Grid)
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB & Mongoose ODM
-- **API Architecture:** RESTful JSON API with CORS enabled
-
----
-
-## ⚙️ Installation & Setup Guide
-
-### 1. Prerequisites
-- **Node.js** (v18.0 or higher) - [Download Node.js](https://nodejs.org/)
-- **MongoDB** running locally on default port `27017` **OR** a free [MongoDB Atlas](https://www.mongodb.com/atlas) connection string.
+1. Push this repository to GitHub (or import your repo on [Vercel](https://vercel.com)).
+2. On the Vercel **New Project** screen:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `./` (Leave as default project root)
+   - **Build Command:** `npm run build` (auto-detected)
+   - **Output Directory:** `frontend/dist` (auto-detected from `vercel.json`)
+3. **Environment Variables:**
+   - Add `MONGO_URI` = `mongodb+srv://shreyayadav9619573842_db_user:r6hE7x9VfuPPydgC@cluster0.4mm8slo.mongodb.net/watchlist?retryWrites=true&w=majority`
+4. Click **Deploy**!
 
 ---
 
-### 2. Backend Setup
+## 💻 Local Development
 
-Open a terminal in the project root directory:
-
+### 1. Install Dependencies
 ```bash
-cd backend
+# Install root, backend, and frontend dependencies
+npm run install:all
 npm install
 ```
 
-Configure your `.env` file in the `backend/` directory:
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/watchlist_db
-NODE_ENV=development
-```
-*(If using MongoDB Atlas, replace `MONGO_URI` with your Atlas connection string).*
-
-#### Seed Dummy Data (Optional, but recommended for testing):
+### 2. Seed Database (Optional)
 ```bash
 npm run seed
 ```
-This populates 8 realistic movies, series, and anime with platforms and ratings.
 
-#### Start Backend Server:
-```bash
-npm run dev
-# Or: npm start
-```
-The server will start at: `http://localhost:5000`
+### 3. Run Locally
+- In terminal 1: `npm run server` (Backend starts on `http://localhost:5000`)
+- In terminal 2: `npm run client` (Frontend starts on `http://localhost:3000`)
 
 ---
 
-### 3. Frontend Setup
+## 🔌 REST API Endpoints
 
-Open a second terminal window:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The React application will launch at: `http://localhost:3000`
-
----
-
-## 🔌 REST API Endpoints Reference
-
-| Method | Endpoint | Description | Request Body |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/movies` | Fetch all watchlist entries | None |
-| **POST** | `/api/movies` | Create a new movie/series entry | `{ title, type, platform, rating, status }` |
-| **PUT** | `/api/movies/:id` | Update watch status or rating | `{ status?, rating?, title?, ... }` |
-| **DELETE** | `/api/movies/:id` | Remove an entry from watchlist | None |
-
----
-
-## 🎯 Key Features Implemented
-
-1. **Movie Schema with Validation:**
-   - `title`: String (Required, trimmed)
-   - `type`: Enum `['Movie', 'Series', 'Anime']`
-   - `platform`: Enum `['Netflix', 'Prime', 'Hotstar', 'YouTube', 'Other']`
-   - `rating`: Number from 1 to 5
-   - `status`: Enum `['Plan to Watch', 'Watching', 'Completed']`
-   - `timestamps`: Automatic `createdAt` & `updatedAt`
-
-2. **Responsive Dark-Themed UI:**
-   - Platform-specific badges (Netflix Red, Prime Blue, Hotstar Teal, YouTube Red, Other Purple).
-   - Dynamic counter dashboard for Total, Plan to Watch, Watching, and Completed.
-   - Real-time search filter and status tabs.
-   - Interactive star rating selector directly on cards.
-   - One-click status cycle button (`Plan to Watch` ➔ `Watching` ➔ `Completed`).
-
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/api/movies` | Fetch all watchlist items from MongoDB Atlas |
+| **POST** | `/api/movies` | Add a new entry `{ title, type, platform, rating, status }` |
+| **PUT** | `/api/movies/:id` | Update watch status or star rating |
+| **DELETE**| `/api/movies/:id` | Delete an entry |

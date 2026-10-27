@@ -1,5 +1,8 @@
-// Base API URL - Uses Vite proxy in development or direct localhost:5000 if needed
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/movies';
+// Base API URL:
+// In production on Vercel: defaults to relative '/api/movies' so it calls the same domain (Zero CORS / Failed to Fetch issues)
+// In local development: Vite proxy forwards '/api' to http://localhost:5000
+// Can also be overridden with custom VITE_API_URL if needed
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/movies';
 
 export const getMovies = async (statusFilter = 'All', typeFilter = 'All') => {
   const params = new URLSearchParams();
@@ -55,4 +58,3 @@ export const deleteMovie = async (id) => {
   }
   return data;
 };
-

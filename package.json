@@ -5,13 +5,11 @@
   "main": "api/index.js",
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
-    "start": "node backend/server.js",
-    "server": "cd backend && npm run dev",
+    "start": "node api/index.js",
+    "server": "node api/index.js",
     "client": "cd frontend && npm run dev",
-    "seed": "cd backend && npm run seed",
-    "install:backend": "cd backend && npm install",
-    "install:frontend": "cd frontend && npm install",
-    "install:all": "npm run install:backend && npm run install:frontend"
+    "seed": "node api/seed.js",
+    "dev": "node api/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

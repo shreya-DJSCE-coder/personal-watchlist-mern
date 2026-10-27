@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const DEFAULT_URI = 'mongodb+srv://shreyayadav9619573842_db_user:r6hE7x9VfuPPydgC@cluster0.4mm8slo.mongodb.net/watchlist?retryWrites=true&w=majority';
 
-// Global cache for serverless environments (prevents connection leaks across lambda invocations)
+// Global cache across serverless function invocations
 let cached = global.mongoose;
 
 if (!cached) {
@@ -18,18 +18,18 @@ const connectDB = async () => {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 8000
+      dbName: 'watchlist',
+      serverSelectionTimeoutMS: 10000
     };
 
     cached.promise = mongoose
       .connect(mongoUri, opts)
       .then((mongooseInstance) => {
-        console.log(`✅ MongoDB Connected to: ${mongooseInstance.connection.host}`);
+        console.log(`✅ MongoDB Atlas Connected: DB [${mongooseInstance.connection.name}] on host [${mongooseInstance.connection.host}]`);
         return mongooseInstance;
       })
       .catch((err) => {
-        console.error(`❌ MongoDB Connection Error: ${err.message}`);
+        console.error(`❌ MongoDB Atlas Connection Error: ${err.message}`);
         cached.promise = null;
         throw err;
       });
@@ -44,6 +44,4 @@ const connectDB = async () => {
   }
 };
 
-const getIsConnected = () => mongoose.connection.readyState === 1;
-
-module.exports = { connectDB, getIsConnected };
+module.exports = { connectDB };

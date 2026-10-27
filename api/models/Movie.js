@@ -42,9 +42,10 @@ const movieSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    collection: 'movies'
   }
 );
 
-module.exports = mongoose.model('Movie', movieSchema);
-
+// Prevent re-compiling model in serverless hot environments
+module.exports = mongoose.models.Movie || mongoose.model('Movie', movieSchema, 'movies');
